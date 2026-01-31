@@ -14,8 +14,12 @@ class CircleLog(pygame.sprite.Sprite):
 class Knife(pygame.sprite.Sprite):
     def __init__(self, pos):
         super().__init__()
-        self.image = pygame.Surface((10, 30), pygame.SRCALPHA)
+        self.image = pygame.Surface((10, 50), pygame.SRCALPHA)
         self.image.fill((192, 192, 192))  # Grey color for the knife
         self.rect = self.image.get_rect(topleft=pos)
         self.mask = pygame.mask.from_surface(self.image)
         self.type = "knife"
+
+    def update(self):
+        from physics import throw_knife
+        throw_knife(self)

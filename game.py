@@ -22,6 +22,9 @@ while running:
     for event in pygame.event.get():
         if event.type == QUIT:
             running = False
+        if event.type == KEYDOWN and event.key == K_SPACE:
+            knife.update()
+
     screen.fill((0, 0, 0))  # Clear screen with black
     all_sprites.draw(screen)
     pygame.display.flip()
