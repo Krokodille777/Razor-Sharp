@@ -10,6 +10,7 @@ class CircleLog(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(topleft=pos)
         self.mask = pygame.mask.from_surface(self.image)
         self.type = "circle_log"
+
 class Knife(pygame.sprite.Sprite):
     def __init__(self, pos):
         super().__init__()
