@@ -1,5 +1,4 @@
 import pygame
-
 from pygame.locals import *
 from objects import CircleLog, Knife
 
@@ -10,12 +9,10 @@ clock = pygame.time.Clock()
 screen_centerX = screen.get_width() // 2
 screen_centerY = screen.get_height() // 2
 
-log = CircleLog((screen_centerX - 200, screen_centerY - 200))
-knife = Knife((screen_centerX-25, screen_centerY + 205))
+log = CircleLog((screen_centerX - 175, screen_centerY - 175))
+knife = Knife((screen_centerX - 5, screen_centerY + 205), log)
 
-
-all_sprites = pygame.sprite.Group()
-all_sprites.add(log, knife)
+all_sprites = pygame.sprite.Group(log, knife)
 
 running = True
 while running:
@@ -23,9 +20,11 @@ while running:
         if event.type == QUIT:
             running = False
         if event.type == KEYDOWN and event.key == K_SPACE:
-            knife.update()
+            knife.throw()
 
-    screen.fill((0, 0, 0))  # Clear screen with black
+    all_sprites.update()
+
+    screen.fill((0, 0, 0))
     all_sprites.draw(screen)
     pygame.display.flip()
     clock.tick(60)

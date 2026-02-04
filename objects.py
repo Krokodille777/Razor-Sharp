@@ -1,25 +1,52 @@
 import pygame
-from pygame.locals import *
 
 class CircleLog(pygame.sprite.Sprite):
     def __init__(self, pos):
         super().__init__()
         radius = 175
-        self.image = pygame.Surface((radius*2, radius*2), pygame.SRCALPHA)
-        pygame.draw.circle(self.image, (139, 69, 19), (radius, radius), radius)  # Brown color for the log
-        self.rect = self.image.get_rect(topleft=pos)
-        self.mask = pygame.mask.from_surface(self.image)
-        self.type = "circle_log"
+        self.original_image = pygame.Surface((radius * 2, radius * 2), pygame.SRCALPHA)
+        pygame.draw.circle(self.original_image, (139, 69, 19), (radius, radius), radius)
 
-class Knife(pygame.sprite.Sprite):
-    def __init__(self, pos):
-        super().__init__()
-        self.image = pygame.Surface((10, 50), pygame.SRCALPHA)
-        self.image.fill((192, 192, 192))  # Grey color for the knife
+        self.image = self.original_image.copy()
         self.rect = self.image.get_rect(topleft=pos)
         self.mask = pygame.mask.from_surface(self.image)
-        self.type = "knife"
+
+        self.type = "circle_log"
+        self.angle = 0
 
     def update(self):
-        from physics import throw_knife
-        throw_knife(self)
+        from physics import rotate_log
+        self.angle = (self.angle + 2) % 360  # скорость вращения
+        rotate_log(self)
+
+
+class Knife(pygame.sprite.Sprite):
+    def __init__(self, pos, log: CircleLog):
+        super().__init__()
+        self.original_image = pygame.Surface((10, 50), pygame.SRCALPHA)
+        self.original_image.fill((192, 192, 192))
+
+        self.image = self.original_image.copy()
+        self.rect = self.image.get_rect(topleft=pos)
+        self.mask = pygame.mask.from_surface(self.image)
+
+        self.type = "knife"
+        self.log = log
+
+        self.state = "idle"   # idle / flying / stuck
+        self.speed = -12      # летим вверх (y уменьшается)
+
+        self.stick_vec = None
+        self.stick_log_angle = 0
+
+    def throw(self):
+        if self.state == "idle":
+            self.state = "flying"
+
+    def update(self):
+        from physics import move_knife, update_stuck_knife
+
+        if self.state == "flying":
+            move_knife(self, self.log)
+        elif self.state == "stuck":
+            update_stuck_knife(self, self.log)
