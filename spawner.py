@@ -1,0 +1,48 @@
+#This file is responsible for spawning knives, depending on random amount (4 -  13)
+
+
+import random
+from objects import Knife
+import pygame
+
+
+class KnifeSpawner:
+    def __init__(self, screen_width, screen_height, log):
+        self.screen_width = screen_width
+        self.screen_height = screen_height
+        self.log = log
+
+        self.remaining = random.randint(4, 13)
+        self.active = None
+
+        self.group = pygame.sprite.Group()
+
+    def star_round(self):
+        self.remaining = random.randint(4, 13)
+        self. group.empty()
+        self.active = self._spawn_active_knife()
+        self.group.add(self.active)
+
+    def _spawn_active_knife(self):
+
+        return Knife((self.screen_width // 2 - 5, self.screen_height - 120), self.log)
+    
+    def throw_active(self):
+        if self.active is not None:
+
+            self.active.throw()
+
+    def update(self):
+        if self.active is None:
+            return
+        
+        if getattr(self.active, "state", None) == "stuck":
+            
+            if not getattr(self.active, "_reported_stuck", False):
+                self.active._reported_stuck = True
+                self.remaining -= 1
+                if self.remaining > 0:
+                    self.active = self._spawn_active_knife()
+                    self.group.add(self.active)
+                else:
+                    self.active = None

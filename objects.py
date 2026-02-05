@@ -45,8 +45,9 @@ class Knife(pygame.sprite.Sprite):
 
     def update(self):
         from physics import move_knife, update_stuck_knife
-
         if self.state == "flying":
             move_knife(self, self.log)
         elif self.state == "stuck":
             update_stuck_knife(self, self.log)
+
+
