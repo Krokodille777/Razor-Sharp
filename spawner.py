@@ -28,9 +28,14 @@ class KnifeSpawner:
         return Knife((self.screen_width // 2 - 5, self.screen_height - 120), self.log)
     
     def throw_active(self):
-        if self.active is not None:
+        if self.active is None:
+            return False
 
-            self.active.throw()
+        if self.active.state != "idle":
+            return False
+
+        self.active.throw()
+        return True
 
     def update(self):
         if self.active is None:

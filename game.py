@@ -1,6 +1,6 @@
 import pygame
 from pygame.locals import *
-from objects import CircleLog, Knife
+from objects import CircleLog
 from spawner import KnifeSpawner
 
 pygame.init()
@@ -15,8 +15,6 @@ log = CircleLog((screen_centerX - 175, screen_centerY - 175))
 spawner = KnifeSpawner(screen.get_width(), screen.get_height(), log)
 spawner.star_round()
 
-knife = Knife((screen_centerX - 5, screen_centerY + 205), log)
-
 all_sprites = pygame.sprite.Group(log)
 knives = spawner.group
 
@@ -29,11 +27,15 @@ while running:
         #When the game starts, information about the number of knives is displayed in the console before throwing the first knife
         if event.type == KEYDOWN:
             if event.key == K_SPACE:
+                if spawner.throw_active():
                     print(f"Knives left to throw: {spawner.remaining}")
-                    spawner.throw_active()
     log.update()
     knives.update()
     spawner.update()
+
+    if spawner.remaining == 0 and spawner.active is None:
+        print("No knives left. Round over.")
+        running = False
 
     screen.fill((0, 0, 0))
     screen.blit(log.image, log.rect)

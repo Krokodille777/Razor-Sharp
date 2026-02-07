@@ -35,7 +35,8 @@ def update_stuck_knife(knife, log):
     rotated = knife.stick_vec.rotate(-delta)  # если будет крутиться "не туда" — уберите минус
     knife.rect.center = (log.rect.centerx + rotated.x, log.rect.centery + rotated.y)
 
-    # нож тоже вращаем вместе с логом
-    knife.image = pygame.transform.rotate(knife.original_image, log.angle)
+    # поворачиваем нож только на дельту с момента "втыкания",
+    # чтобы при попадании он не делал мгновенный "лишний" наклон
+    knife.image = pygame.transform.rotate(knife.original_image, -delta)
     knife.rect = knife.image.get_rect(center=knife.rect.center)
     knife.mask = pygame.mask.from_surface(knife.image)
