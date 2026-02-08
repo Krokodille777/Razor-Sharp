@@ -19,6 +19,11 @@ def move_knife(knife, log):
         knife.state = "idle"
         return
 
+    if knife.spawner is not None and knife_collides_with_stuck_knives(knife, knife.spawner):
+        knife.hit_stuck_knife = True
+        knife.state = "crashed"
+        return
+
     if pygame.sprite.collide_mask(knife, log):
         # откатим шаг назад, чтобы не "залипнуть" глубоко
         knife.rect.y -= knife.speed
@@ -30,6 +35,13 @@ def stick_knife(knife, log):
     knife.stick_vec = pygame.math.Vector2(knife.rect.center) - log.rect.center
     knife.stick_log_angle = log.angle
 
+
+def knife_collides_with_stuck_knives(knife, spawner):
+    for other in spawner.group:
+        if other.state == "stuck" and pygame.sprite.collide_mask(knife, other):
+            return True
+    return False
+
 def update_stuck_knife(knife, log):
     # насколько провернулось бревно с момента "втыкания"
     delta = log.angle - knife.stick_log_angle
@@ -39,6 +51,6 @@ def update_stuck_knife(knife, log):
 
     # поворачиваем нож только на дельту с момента "втыкания",
     # чтобы при попадании он не делал мгновенный "лишний" наклон
-    knife.image = pygame.transform.rotate(knife.original_image, delta)
+    knife.image = pygame.transform.rotate(knife.original_image, -delta)
     knife.rect = knife.image.get_rect(center=knife.rect.center)
     knife.mask = pygame.mask.from_surface(knife.image)

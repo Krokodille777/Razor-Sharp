@@ -1,5 +1,6 @@
 import pygame
-import random 
+
+
 class CircleLog(pygame.sprite.Sprite):
     def __init__(self, pos):
         super().__init__()
@@ -13,11 +14,12 @@ class CircleLog(pygame.sprite.Sprite):
 
         self.type = "circle_log"
         self.angle = 0
+        self.rotation_speed = 4.0
 
     def update(self):
         from physics import rotate_log
-        #Now the rotation speed is randomized, so the log will rotate at different speeds each time the game is played, adding an element of unpredictability and challenge for the player.
-        self.angle = (self.angle + 4) % 360  # скорость вращения
+
+        self.angle = (self.angle + self.rotation_speed) % 360
         rotate_log(self)
 
 
@@ -39,6 +41,8 @@ class Knife(pygame.sprite.Sprite):
 
         self.stick_vec = None
         self.stick_log_angle = 0
+        self.spawner = None
+        self.hit_stuck_knife = False
 
     def throw(self):
         if self.state == "idle":
