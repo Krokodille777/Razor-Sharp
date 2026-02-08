@@ -5,7 +5,7 @@ from rounds import RoundManager
 
 
 pygame.init()
-screen = pygame.display.set_mode((400, 600))
+screen = pygame.display.set_mode((800, 800))
 pygame.display.set_caption("Razor-Sharp")
 clock = pygame.time.Clock()
 
@@ -16,8 +16,8 @@ TEXT_WHITE = (240, 240, 240)
 TEXT_GREEN = (90, 240, 120)
 TEXT_RED = (240, 90, 90)
 
-log = CircleLog((50, 150))
-round_manager = RoundManager(400, 600, log)
+log = CircleLog((225, 150))
+round_manager = RoundManager(800, 800, log)
 knife_spawner = round_manager.spawner
 
 score = 0

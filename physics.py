@@ -51,6 +51,6 @@ def update_stuck_knife(knife, log):
 
     # поворачиваем нож только на дельту с момента "втыкания",
     # чтобы при попадании он не делал мгновенный "лишний" наклон
-    knife.image = pygame.transform.rotate(knife.original_image, -delta)
+    knife.image = pygame.transform.rotate(knife.original_image, delta)
     knife.rect = knife.image.get_rect(center=knife.rect.center)
     knife.mask = pygame.mask.from_surface(knife.image)
