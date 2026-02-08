@@ -1,5 +1,8 @@
 import pygame
 
+
+
+
 def rotate_log(log):
     center = log.rect.center
     log.image = pygame.transform.rotate(log.original_image, log.angle)

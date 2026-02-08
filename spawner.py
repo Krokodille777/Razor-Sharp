@@ -12,13 +12,13 @@ class KnifeSpawner:
         self.screen_height = screen_height
         self.log = log
 
-        self.remaining = random.randint(4, 13)
+        self.remaining = random.randint(6, 16)
         self.active = None
 
         self.group = pygame.sprite.Group()
 
-    def star_round(self):
-        self.remaining = random.randint(4, 13)
+    def start_round(self):
+        self.remaining = random.randint(6, 16)
         self. group.empty()
         self.active = self._spawn_active_knife()
         self.group.add(self.active)
@@ -46,7 +46,8 @@ class KnifeSpawner:
             if not getattr(self.active, "_reported_stuck", False):
                 self.active._reported_stuck = True
                 self.remaining -= 1
-                if self.remaining > 0:
+                # By the end of the round, no knives should be left to throw, and the player should see a "You Win!" message. If the player tries to throw a knife when there are no knives left, nothing should happen.
+                if self.remaining > -1:
                     self.active = self._spawn_active_knife()
                     self.group.add(self.active)
                 else:
