@@ -7,7 +7,7 @@ def rotate_log(log):
     center = log.rect.center
     log.image = pygame.transform.rotate(log.original_image, log.angle)
     log.rect = log.image.get_rect(center=center)
-    log.mask = pygame.mask.from_surface(log.image)
+    log.mask = pygame.mask.from_surface(log.image, 1)
 
 
 def move_knife(knife, log):
@@ -47,14 +47,13 @@ def update_stuck_knife(knife, log):
     # насколько провернулось бревно с момента "втыкания"
     delta = log.angle - knife.stick_log_angle
 
-    angle = -delta  # if вращается "не туда" — уберите минус
+    angle = delta  # if вращается "не туда" — уберите минус
     rotated = knife.stick_vec.rotate(angle)
     desired_tip = pygame.math.Vector2(log.rect.center) + rotated
 
-    # поворачиваем нож только на дельту с момента "втыкания",
-    # чтобы при попадании он не делал мгновенный "лишний" наклон
+    # повернем нож так, чтобы он сохранял направление к центру бревна
     knife.image = pygame.transform.rotate(knife.original_image, angle)
     tip_offset = knife.tip_local.rotate(angle)
     desired_center = desired_tip - tip_offset
     knife.rect = knife.image.get_rect(center=(desired_center.x, desired_center.y))
-    knife.mask = pygame.mask.from_surface(knife.image)
+    knife.mask = pygame.mask.from_surface(knife.image, 1)

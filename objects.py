@@ -16,7 +16,7 @@ KNIFE_SPRITE_PATHS = (
 
 # Set to None to use the image's native size.
 LOG_SIZE = (350, 350)
-KNIFE_SIZE = (18, 80)
+KNIFE_SIZE = (30, 80)
 
 
 def _load_sprite(path: Path, size):
@@ -55,7 +55,7 @@ class CircleLog(pygame.sprite.Sprite):
 
         self.image = self.original_image.copy()
         self.rect = self.image.get_rect(topleft=pos)
-        self.mask = pygame.mask.from_surface(self.image)
+        self.mask = pygame.mask.from_surface(self.image, 1)
 
         self.type = "circle_log"
         self.angle = 0
@@ -85,7 +85,7 @@ class Knife(pygame.sprite.Sprite):
         else:
             rect.topleft = pos
         self.rect = rect
-        self.mask = pygame.mask.from_surface(self.image)
+        self.mask = pygame.mask.from_surface(self.image, 1)
 
         self.type = "knife"
         self.log = log
@@ -123,5 +123,4 @@ class Knife(pygame.sprite.Sprite):
             move_knife(self, self.log)
         elif self.state == "stuck":
             update_stuck_knife(self, self.log)
-
 

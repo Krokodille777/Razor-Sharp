@@ -61,7 +61,7 @@ while running:
             game_state = "defeat"
             status_text = "Defeat: you hit a stuck knife."
             status_color = TEXT_RED
-        elif update_event == "stuck":
+        elif update_event in ("stuck", "empty"):
             round_manager.on_knife_stuck()
             if round_manager.has_round_won():
                 gained = round_manager.calculate_round_score()
@@ -73,10 +73,10 @@ while running:
                     game_state = "victory"
                     status_text = f"Victory! Final score: {score}"
                     status_color = TEXT_GREEN
-        elif update_event == "empty" and not round_manager.has_round_won():
-            game_state = "defeat"
-            status_text = "Defeat: knives ended before target."
-            status_color = TEXT_RED
+            elif update_event == "empty":
+                game_state = "defeat"
+                status_text = "Defeat: knives ended before target."
+                status_color = TEXT_RED
 
         
 
