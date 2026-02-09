@@ -32,7 +32,8 @@ class KnifeSpawner:
         self.group.add(self.active)
 
     def _spawn_active_knife(self):
-        knife = Knife((self.screen_width // 2 - 5, self.screen_height - 120), self.log)
+        spawn_pos = (self.screen_width // 2, self.screen_height - 20)
+        knife = Knife(spawn_pos, self.log, anchor="midbottom")
         knife.spawner = self
         return knife
     
@@ -47,7 +48,7 @@ class KnifeSpawner:
         return True
     
     def restart_game(self, knives_to_throw=None, knives_to_win=None):
-          self.start_round(knives_to_throw, knives_to_win)
+        self.start_round(knives_to_throw, knives_to_win)
 
     def update(self):
         if self.active is None:
