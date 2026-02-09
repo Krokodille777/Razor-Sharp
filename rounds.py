@@ -47,3 +47,9 @@ class RoundManager:
         extra_knives = max(0, self.round_knives_total - self.round_limit)
         multiplier = max(1, extra_knives)
         return self.round_hits * multiplier
+    
+    def restart_game(self):
+        self.current_round = 0
+        return self.start_next_round()
+
+    

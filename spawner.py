@@ -45,6 +45,9 @@ class KnifeSpawner:
 
         self.active.throw()
         return True
+    
+    def restart_game(self, knives_to_throw=None, knives_to_win=None):
+          self.start_round(knives_to_throw, knives_to_win)
 
     def update(self):
         if self.active is None:

@@ -34,6 +34,7 @@ else:
     status_text = (
         f"Round {round_manager.current_round}: hit {round_manager.round_limit} knives."
     )
+#restarts the whole game, resetting score and starting from the first round. Can be triggered by pressing 'R' key.
 
 
 while running:
@@ -45,7 +46,12 @@ while running:
                 running = False
             elif event.key == K_SPACE and game_state == "playing":
                 knife_spawner.throw_active()
-
+            elif  event.key == pygame.K_r and game_state in ["defeat", "victory"]:
+                round_manager.restart_game()
+                score = 0
+                game_state = "playing"
+                status_text = f"Round {round_manager.current_round}: hit {round_manager.round_limit} knives."
+                status_color = TEXT_WHITE
     if game_state == "playing":
         log.update()
         knife_spawner.group.update()
@@ -71,6 +77,8 @@ while running:
             game_state = "defeat"
             status_text = "Defeat: knives ended before target."
             status_color = TEXT_RED
+
+        
 
     screen.fill((14, 14, 20))
     screen.blit(log.image, log.rect)
