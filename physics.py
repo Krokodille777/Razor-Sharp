@@ -1,5 +1,5 @@
+import math
 import pygame
-
 
 
 
@@ -43,17 +43,31 @@ def knife_collides_with_stuck_knives(knife, spawner):
             return True
     return False
 
+
+def _rotate_screen(vec: pygame.math.Vector2, degrees: float) -> pygame.math.Vector2:
+    """
+    Rotate a vector in screen coordinates (x right, y down) by degrees CCW.
+    This matches pygame.transform.rotate(surface, degrees).
+    """
+    radians = math.radians(degrees)
+    cos_a = math.cos(radians)
+    sin_a = math.sin(radians)
+    return pygame.math.Vector2(
+        vec.x * cos_a + vec.y * sin_a,
+        -vec.x * sin_a + vec.y * cos_a,
+    )
+
+
 def update_stuck_knife(knife, log):
     # насколько провернулось бревно с момента "втыкания"
     delta = log.angle - knife.stick_log_angle
 
-    angle = delta  # if вращается "не туда" — уберите минус
-    rotated = knife.stick_vec.rotate(angle)
+    rotated = _rotate_screen(knife.stick_vec, delta)
     desired_tip = pygame.math.Vector2(log.rect.center) + rotated
 
-    # повернем нож так, чтобы он сохранял направление к центру бревна
-    knife.image = pygame.transform.rotate(knife.original_image, angle)
-    tip_offset = knife.tip_local.rotate(angle)
+    # Rotate knife exactly with the log (no independent spin).
+    knife.image = pygame.transform.rotate(knife.original_image, delta)
+    tip_offset = _rotate_screen(knife.tip_local, delta)
     desired_center = desired_tip - tip_offset
     knife.rect = knife.image.get_rect(center=(desired_center.x, desired_center.y))
     knife.mask = pygame.mask.from_surface(knife.image, 1)

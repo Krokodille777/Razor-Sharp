@@ -69,9 +69,9 @@ class CircleLog(pygame.sprite.Sprite):
 
 
 class Knife(pygame.sprite.Sprite):
-    def __init__(self, pos, log: CircleLog, *, anchor="topleft"):
+    def __init__(self, pos, log: CircleLog, *, anchor="midtop"):
         super().__init__()
-        fallback = pygame.Surface((10, 50), pygame.SRCALPHA)
+        fallback = pygame.Surface(KNIFE_SIZE, pygame.SRCALPHA)
         fallback.fill((192, 192, 192))
 
         self.original_image = (
@@ -83,7 +83,7 @@ class Knife(pygame.sprite.Sprite):
         if anchor == "midbottom":
             rect.midbottom = pos
         else:
-            rect.topleft = pos
+            rect.midtop = pos
         self.rect = rect
         self.mask = pygame.mask.from_surface(self.image, 1)
 
