@@ -3,9 +3,10 @@ from pygame.locals import K_ESCAPE, K_SPACE, KEYDOWN, QUIT
 from objects import CircleLog
 from rounds import RoundManager
 from main_menu import MainMenu, AboutScreen
+from music import load_music, load_main_menu_music, stop_music, victory_music, defeat_music
 
 #Main menu should be played before the game starts. While main menu window is open, the game freezes and doesn't update. After player clicks "Start Game", the main menu closes and the game starts. If player clicks "About", the about screen opens, showing game description and controls, and main menu closes. From about screen, player can return to main menu by pressing "Esc" key.
-
+#Music plays only in background while player is playing the game, and stops when player returns to main menu or about screen. Music should loop indefinitely while game is active.
 pygame.init()
 screen = pygame.display.set_mode((800, 800))
 mainmenu = MainMenu(800, 800)
@@ -33,6 +34,18 @@ status_color = TEXT_WHITE
 game_state = "main_menu"
 running = True
 
+is_playing_special_music = False
+
+def definite_stop():
+    stop_music()
+    global is_playing_special_music
+    is_playing_special_music = False
+
+def definite_play(music_func):
+    music_func()
+    global is_playing_special_music
+    is_playing_special_music = True
+
 #restarts the whole game, resetting score and starting from the first round. Can be triggered by pressing 'R' key.
 
 
@@ -50,22 +63,29 @@ while running:
                 knife_spawner.throw_active()
             elif  event.key == pygame.K_r and game_state in ["defeat", "victory"]:
                 round_manager.restart_game()
+                definite_stop()
+                load_music()
                 score = 0
                 game_state = "playing"
                 status_text = f"Round {round_manager.current_round}: hit {round_manager.round_limit} knives."
                 status_color = TEXT_WHITE
         elif game_state == "main_menu":
             action = mainmenu.handle_event(event)
+
             if action == "start":
                 score = 0
                 round_manager.restart_game()
                 game_state = "playing"
+                definite_stop()
+                load_music()
                 status_text = (
                     f"Round {round_manager.current_round}: hit {round_manager.round_limit} knives."
                 )
                 status_color = TEXT_WHITE
             elif action == "about":
                 game_state = "about"
+                definite_stop()
+                definite_play(load_main_menu_music)
             elif action == "quit":
                 running = False
     if game_state == "playing":
@@ -77,6 +97,8 @@ while running:
             game_state = "defeat"
             status_text = "Defeat: you hit a stuck knife."
             status_color = TEXT_RED
+            definite_stop()
+            defeat_music()
         elif update_event in ("stuck", "empty"):
             round_manager.on_knife_stuck()
             if round_manager.has_round_won():
@@ -89,14 +111,22 @@ while running:
                     game_state = "victory"
                     status_text = f"Victory! Final score: {score}"
                     status_color = TEXT_GREEN
+                    definite_stop()
+                    victory_music()
             elif update_event == "empty":
                 game_state = "defeat"
                 status_text = "Defeat: knives ended before target."
                 status_color = TEXT_RED
 
     if game_state == "main_menu":
+        if not is_playing_special_music:
+            definite_stop()
+            definite_play(load_main_menu_music)
         mainmenu.draw(screen)
     elif game_state == "about":
+        if not is_playing_special_music:
+            definite_stop()
+            definite_play(load_main_menu_music)
         about_screen.draw(screen)
     else:
         screen.fill((14, 14, 20))
