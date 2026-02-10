@@ -6,15 +6,15 @@ class MainMenu:
         self.screen_width = screen_width
         self.screen_height = screen_height
         #old-school pixelated font 
-        self.font = pygame.font.SysFont("Arial", 48, bold=True)
-        self.title_text = self.font.render("Razor Sharp", True, (255, 0, 0))
+        self.font = pygame.font.SysFont("Courier New", 48, bold=True)
+        self.title_text = self.font.render("Razor Sharp", True, (0, 255, 0))
 
         # Stylesheet for buttons 
         self.button_font = pygame.font.SysFont("Arial", 36, bold=True)
-        self.button_color = (255, 0, 0)
-        self.button_color_hover = (255, 100, 100)
-        self.border_color = (255, 255, 255)
-        self.text_color = (255, 255, 255)
+        self.button_color = (0, 0, 0)
+        self.button_color_hover = (0, 255, 0)
+        self.border_color = (0, 255, 0)
+        self.text_color = (0, 255, 0)
         self.button_width = 200
         self.button_height = 60
         self.button_padding = 20
