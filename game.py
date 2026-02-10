@@ -2,10 +2,15 @@ import pygame
 from pygame.locals import K_ESCAPE, K_SPACE, KEYDOWN, QUIT
 from objects import CircleLog
 from rounds import RoundManager
+from main_menu import MainMenu, AboutScreen
 
+#Main menu should be played before the game starts. While main menu window is open, the game freezes and doesn't update. After player clicks "Start Game", the main menu closes and the game starts. If player clicks "About", the about screen opens, showing game description and controls, and main menu closes. From about screen, player can return to main menu by pressing "Esc" key.
 
 pygame.init()
 screen = pygame.display.set_mode((800, 800))
+mainmenu = MainMenu(800, 800)
+about_screen = AboutScreen(800, 800)
+
 pygame.display.set_caption("Razor-Sharp")
 clock = pygame.time.Clock()
 
@@ -16,6 +21,8 @@ TEXT_WHITE = (240, 240, 240)
 TEXT_GREEN = (90, 240, 120)
 TEXT_RED = (240, 90, 90)
 
+
+
 log = CircleLog((225, 150))
 round_manager = RoundManager(800, 800, log)
 knife_spawner = round_manager.spawner
@@ -23,17 +30,9 @@ knife_spawner = round_manager.spawner
 score = 0
 status_text = "Round 1: press SPACE to throw."
 status_color = TEXT_WHITE
-game_state = "playing"
+game_state = "main_menu"
 running = True
 
-if not round_manager.start_next_round():
-    game_state = "victory"
-    status_text = "Victory! No rounds configured."
-    status_color = TEXT_GREEN
-else:
-    status_text = (
-        f"Round {round_manager.current_round}: hit {round_manager.round_limit} knives."
-    )
 #restarts the whole game, resetting score and starting from the first round. Can be triggered by pressing 'R' key.
 
 
@@ -43,7 +42,10 @@ while running:
             running = False
         elif event.type == KEYDOWN:
             if event.key == K_ESCAPE:
-                running = False
+                if game_state in ["defeat", "victory", "playing"]:
+                    game_state = "main_menu"
+                elif game_state == "about":
+                    game_state = "main_menu"
             elif event.key == K_SPACE and game_state == "playing":
                 knife_spawner.throw_active()
             elif  event.key == pygame.K_r and game_state in ["defeat", "victory"]:
@@ -52,6 +54,20 @@ while running:
                 game_state = "playing"
                 status_text = f"Round {round_manager.current_round}: hit {round_manager.round_limit} knives."
                 status_color = TEXT_WHITE
+        elif game_state == "main_menu":
+            action = mainmenu.handle_event(event)
+            if action == "start":
+                score = 0
+                round_manager.restart_game()
+                game_state = "playing"
+                status_text = (
+                    f"Round {round_manager.current_round}: hit {round_manager.round_limit} knives."
+                )
+                status_color = TEXT_WHITE
+            elif action == "about":
+                game_state = "about"
+            elif action == "quit":
+                running = False
     if game_state == "playing":
         log.update()
         knife_spawner.group.update()
@@ -78,30 +94,33 @@ while running:
                 status_text = "Defeat: knives ended before target."
                 status_color = TEXT_RED
 
-        
+    if game_state == "main_menu":
+        mainmenu.draw(screen)
+    elif game_state == "about":
+        about_screen.draw(screen)
+    else:
+        screen.fill((14, 14, 20))
+        screen.blit(log.image, log.rect)
+        knife_spawner.group.draw(screen)
 
-    screen.fill((14, 14, 20))
-    screen.blit(log.image, log.rect)
-    knife_spawner.group.draw(screen)
+        hud_lines = [
+            f"Round: {round_manager.current_round}/{round_manager.total_rounds}",
+            f"Rotation speed: {log.rotation_speed:.2f}",
+            f"Knives in round: {round_manager.round_knives_total}",
+            f"Knives left: {max(knife_spawner.remaining, 0)}",
+            f"Target hits: {round_manager.round_hits}/{round_manager.round_limit}",
+            f"Score: {score}",
+        ]
 
-    hud_lines = [
-        f"Round: {round_manager.current_round}/{round_manager.total_rounds}",
-        f"Rotation speed: {log.rotation_speed:.2f}",
-        f"Knives in round: {round_manager.round_knives_total}",
-        f"Knives left: {max(knife_spawner.remaining, 0)}",
-        f"Target hits: {round_manager.round_hits}/{round_manager.round_limit}",
-        f"Score: {score}",
-    ]
+        y = 10
+        for line in hud_lines:
+            text_surface = hud_font.render(line, True, TEXT_WHITE)
+            screen.blit(text_surface, (10, y))
+            y += 24
 
-    y = 10
-    for line in hud_lines:
-        text_surface = hud_font.render(line, True, TEXT_WHITE)
-        screen.blit(text_surface, (10, y))
-        y += 24
-
-    message_surface = message_font.render(status_text, True, status_color)
-    message_rect = message_surface.get_rect(center=(screen.get_width() // 2, 565))
-    screen.blit(message_surface, message_rect)
+        message_surface = message_font.render(status_text, True, status_color)
+        message_rect = message_surface.get_rect(center=(screen.get_width() // 2, 565))
+        screen.blit(message_surface, message_rect)
 
     pygame.display.flip()
     clock.tick(60)
