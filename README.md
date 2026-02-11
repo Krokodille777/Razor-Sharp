@@ -18,7 +18,7 @@
 <br>
 <li>⚡ Rotation speed and amount of knives changes randomly with each round, so be attentive and try to be as accurate as possible.</li>
 <br>
-<li>🪙 Each knife succesfully thrown into the target will earn you 1 point. Interesting bonus: sometimes knives you can throw will be more than knives you need to throw. So if the round ends succesfully your current score will be multiplied by the amount of knives you have left.</li>
+<li>🪙 Each knife succesfully thrown into the target will earn you 1 point. Interesting bonus: sometimes knives you can throw will be more than knives you need to throw. So if the round ends succesfully the score, you earn for this round,  will be multiplied by the amount of knives you have left.</li>
 <br>
 <li>🏆 The game ends when the player successfully throws all knives into the target, or when a knife hits another knife already stuck in the target.</li>
 <br>
